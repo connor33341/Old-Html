@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Data Calculator</title>
+	</head>
+	<style>
+		 body{
+            color: green;
+        font-family: 'Courier New', Courier, monospace;
+		background-color: #000000;
+	}
+	a{
+		color: green;
+        font-family: 'Courier New', Courier, monospace;
+	}
+	h3{
+		color: green;
+        font-family: 'Courier New', Courier, monospace;
+	}
+	table, th,td {
+		background-color: #000000;
+		border-width: 1px;
+		border-radius: 1px;
+		border-style: solid;
+		border-color: green;
+	}
+	button{
+		color: green;
+        font-family: 'Courier New', Courier, monospace;
+		background-color: #000000;
+		border-color: green;
+		border-radius: 10px;
+		border-width: 1px;
+	}
+	h2{
+		color: blue;
+		background-color: white;
+	}
+	code{
+		color: green;
+        font-family: 'Courier New', Courier, monospace;
+	}
+	.DebugConsole{
+		background-color: grey;
+		color: green;
+	}
+	</style>
+	<body>
+		<h1>Calculator</h1>
+		<button id="ADD" onClick=Add()>Enter Number</button>
+		<button id="CLEAR" onClick=TblClear()>Clear Dataset</button>
+		<button id="CAL"onClick=Calculate()>Calculate</button>
+		<h3 id="MEAN">Mean: 0</h3>
+		<h3 id="MEDIAN">Median: 0</h3>
+		<h3 id="LEAST">Least: 0</h3>
+		<h3 id="GREATEST">Greatest: 0</h3>
+		<h3 id="IQR">IQR: 0</h3>
+		<h3 id="UQ">UQ: 0</h3>
+		<h3 id="IQ">IQ: 0</h3>
+		<table id="TBL">
+			<tr><th>Number</th></tr>
+		</table>
+		<script>
+			//Version 1.2
+			//Last Updated 1/10/23 3:25pm
+			const ADD = document.getElementById("ADD")
+			const CLEAR =  document.getElementById("CLEAR")
+			const CAL =  document.getElementById("CAL")
+			const MEAN =  document.getElementById("MEAN")
+			const MEDIAN =  document.getElementById("MEDIAN")
+			const TBL =  document.getElementById("TBL")
+			const Default_TBL = TBL.innerHTML
+			let Number_Table = []
+			let Orderd_Number_Table = []
+			function Support(){
+				if (clientInformation.appName == 'Netscape'){
+					console.log("Netscape")
+				} else {
+					MEDIAN.innerText = "Browser API is not Netscape"
+				}
+			}
+			Support()
+			function Add(){
+				var Number_String = prompt("Enter Number")
+				var Number_Value = Number(Number_String)
+				TblAdd(Number_Value)
+				Calculate()
+			}
+			function Calculate(){
+				CalculateMean()
+				CalculateMedian()
+			}
+			function TblAdd(Num){
+				TBL.innerHTML = TBL.innerHTML + "<tr><td>"+String(Num)+"</td></tr>"
+				Number_Table.push(Num)
+			}
+			function TblClear(){
+				TBL.innerHTML = Default_TBL
+				Number_Table = []
+				MEAN.innerText = "Mean: 0"
+				MEDIAN.innerText = "Median: 0"
+			}
+			function CalculateMean(){
+				let Top = 0
+				let Bottom = 0
+				for (let index in Number_Table){
+					var Object = Number_Table[index]
+					Bottom = Bottom+Object
+					Top = Top+Object
+				}
+				let Ans = Top/Bottom
+				MEAN.innerText = "Mean: "+String(Ans)
+			}
+			function CalculateMedian(){
+				let Index = -1
+				let Size = Number_Table.length
+				let Number_Table_Rev = []
+				let Found = false
+				let Median = 0
+				let CloseNumbers = []
+				for (let index in Number_Table){
+					var Object = Number_Table[Size-index]
+					Number_Table_Rev.push(Object)
+				}
+				for (let index in Number_Table_Rev){
+					Index = Index+1
+					let Number_A = Number_Table[Index]
+					let Number_B = Number_Table_Rev[Index+1]
+					//console.log(String(Number_A))	
+					//console.log(String(Number_B))
+					if (Number_A == Number_B){
+						Found = true
+						Median = Number_A
+					}	
+				}
+				if (Found == true){
+					MEDIAN.innerText = "Median: "+String(Median)
+				} else {
+					let HalfLength = (Size-2)/2
+					//console.log("Length: "+String(Size)+" HL: "+String(HalfLength))
+					for (let index in Number_Table){
+						if (index == (HalfLength)){
+							CloseNumbers.push(Number_Table[index])
+						}
+						if (index == (Size-HalfLength)-1){
+							CloseNumbers.push(Number_Table_Rev[index])
+						}
+					}
+					//console.log(CloseNumbers)
+					Median = (Math.abs(CloseNumbers[1]-CloseNumbers[0])/2)+CloseNumbers[0]
+					if (Median == NaN){
+						MEDIAN.innerText = "Median: "+String(Number_Table[0]/2)
+					} else {
+						MEDIAN.innerText = "Median: "+String(Median)
+					}
+				}
+			}
+			function CalculateLOGICALSHIFT(){
+				OrderList();
+			}
+			function OrderList(){
+				let Low = 1000; //Logical Inverse
+				let High = -1000;
+				let Iterator = -1;
+				let Least = Low;
+				let Closest = Least+1; //Program uses fake values for iteration
+				let Order = [];
+				for (let index in Number_Table){
+					var Number = Number_Table[index]
+					if (Number < Low){
+						Low = Number
+					}
+					if (Number > High){
+						High = Number
+					}
+				}
+				Orderd_Number_Table = Number_Table
+				Orderd_Number_Table.sort(function(a, b) {
+  					return a - b;
+				});
+				//for (let index in Number_Table){
+					//var Number = Number_Table[index]
+					//let CloseNumbers = [];
+					//for (let index2 in Number_Table){
+					//	if (Number_Table[index2] < Number){
+					//		CloseNumbers.push(Number_Table[index2])
+					//	}
+				//	}
+				//	let ClosestNumber = 1000;
+				//	for (let index3 in CloseNumbers){
+				//		var Number2 = CloseNumbers[index3]
+				//		if (Number2 < ClosestNumber){
+				//			Number2 = ClosestNumber
+				//		}
+				//	}
+				//}
+			}
+		</script>
+	</body>
+</html>

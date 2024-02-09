@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Calculator</title>
+    </head>
+    <style>
+        body{
+            color: green;
+        font-family: 'Courier New', Courier, monospace;
+		background-color: #000000;
+	}
+	a{
+		color: green;
+        font-family: 'Courier New', Courier, monospace;
+	}
+	h3{
+		color: green;
+        font-family: 'Courier New', Courier, monospace;
+	}
+	table, th,td {
+		background-color: #000000;
+		border-width: 1px;
+		border-radius: 1px;
+		border-style: solid;
+		border-color: green;
+	}
+	button{
+		color: green;
+        font-family: 'Courier New', Courier, monospace;
+		background-color: #000000;
+		border-color: green;
+		border-radius: 10px;
+		border-width: 1px;
+	}
+	h2{
+		color: blue;
+		background-color: white;
+	}
+	code{
+		color: green;
+        font-family: 'Courier New', Courier, monospace;
+	}
+	.DebugConsole{
+		background-color: grey;
+		color: green;
+	}
+    </style>
+    <body>
+        <h1>Calculator</h1>
+        <code id="result"></code>
+        <button onClick=AddNumber()>Add number</button>
+        <button onClick=Calcuate()>Calculate</button>
+        <table id="tbl"><tr><th>X</th><th>Y</th></tr></table>
+        <script>
+            let XY_Tbl = []
+            let Result = []
+            let DirectVariant = true
+            let Variant = 0
+            var Tbl = document.getElementById("tbl")
+            var ResultElement = document.getElementById("result")
+            var DefaultTbl = Tbl.innerHTML
+            function AddNumber(){
+                let Data = prompt("Enter X,Y pair")
+                Data = Data.split(",")
+                XY_Tbl.push([Data[0],Data[1]])
+                Tbl.innerHTML = Tbl.innerHTML + "<tr><td>"+Data[0]+"</td><td>"+Data[1]+"</td></tr>"
+            }
+            function Calcuate(){
+                for (let index in XY_Tbl){
+                    var object = XY_Tbl[index]
+                    var Data = Number(object[1])/Number(object[0])
+                    Result.push(Data)
+                }
+                let LocalVariant = 0
+                for (let index in Result){
+                    var object = Result[index]
+                    for (let i in Result){
+                        var o = Result[i]
+                        if (o == object){
+                            LocalVariant = o
+                        } else {
+                            LocalVariant = 0
+                            DirectVariant = false
+                        }
+                    }
+                }
+                if (DirectVariant == true){
+                    Variant = LocalVariant
+                    ResultElement.innerHTML = "DirectVariant: "+String(Variant)
+                } else {
+                    ResultElement.innerHTML = "Not direct variant"
+                }
+                
+            }
+        </script>
+    </body>
+</html>

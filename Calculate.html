@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Calculate</title>
+    </head>
+    <body>
+        <table id="Numbers">
+            <tr><th>Number</th></tr>
+        </table>
+        <button onClick=AddNumber()>Add Number</button>
+        <button onClick=SearchNumber()>Find Number</button>
+        <h1 id="Display"></h1>
+	<h1 id="Display2"></h1>
+        <table id="Output">
+            <tr><th>Output</th></tr>
+        </table>
+        <script>
+                //Data
+                let NumberSystem = [] //Number System
+                let NumberOutputs = [] //Number Outputs
+                let FoundResults = 0 //Found results
+		let RelativeF = 0
+                //Elements
+                const NT = document.getElementById("Numbers") //Number table
+                const OT = document.getElementById("Output") //Output table
+                const FR = document.getElementById("Display") //Display value
+		const RF = document.getElementById("Display2")
+                //Deafaults
+                const DefaultOT = OT.innerHTML //Set Deafaults
+                const DefaultNT = NT.innerHTML //Set Defaults
+                //Functions
+                function AddNumber(){
+                    var num = prompt("Enter number")
+                    NumberSystem.push(num)
+                    DrawNT()
+                }
+                function DrawNT(){
+                    NT.innerHTML = DefaultNT
+                    for (let index in NumberSystem){
+                        var object = NumberSystem[index]
+                        NT.innerHTML = NT.innerHTML + "<tr><td>"+object+"</td></tr>"
+                    }
+                }
+                function DrawOt(){
+                    OT.innerHTML = DefaultOT
+                    FR.innerHTML = String(FoundResults)
+		    RF.innerHTML = String(RelativeF)
+                    for (let index in NumberOutputs){
+                        var object = NumberOutputs[index]
+                        OT.innerHTML = OT.innerHTML + "<tr><td>"+object+"</td></tr>"
+                    }
+                }
+                function SearchNumber(){
+                    let searchperam1 = prompt("Enter lowest number")
+                    let searchperam2 = prompt("Enter highest number")
+                    searchperam1 = Number(searchperam1)
+                    searchperam2 = Number(searchperam2)
+                    NumberOutputs = []
+                    FoundResults = 0
+                    console.log(NumberSystem)
+                    for (let index in NumberSystem){
+                        var object = NumberSystem[index]
+                        console.log("ReadObject:"+String(object))
+                        if (object >= searchperam1){
+                            console.log("GreaterThan:"+String(object))
+                            if (object <= searchperam2){
+                                console.log("LessThan"+String(object))
+                                console.log(object)
+                                NumberOutputs.push(object)
+                                FoundResults = FoundResults +1
+				RelativeF = FoundResults/NumberSystem.length
+                            }
+                        }
+                    }
+                    DrawOt()
+                }
+        </script>
+    </body>
+</html>

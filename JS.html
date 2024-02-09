@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+    <head><title>PowerJS Compiler</title></head>
+    <style>
+        body{
+		color: white;
+		background-color: #818181;
+	}
+	a{
+		color: white;
+	}
+	h3{
+		color: white;
+	}
+	table, th,td {
+		background-color: #818181;
+		border-width: 1px;
+		border-radius: 1px;
+		border-style: solid;
+		border-color: white;
+	}
+	button{
+		color: white;
+		background-color: #818181;
+		border-color: white;
+		border-radius: 10px;
+		border-width: 1px;
+	}
+	h2{
+		color: blue;
+		background-color: white;
+	}
+	code{
+		color: green;
+	}
+	.DebugConsole{
+		background-color: grey;
+		color: green;
+	}
+    </style>
+    <body>
+        <h1>PowerJS Compiler</h1>
+        <input id="text" type="text" spellcheck="false">
+        <button onClick=Compile()>Compile</button>
+        <progress id="progress"></progress>
+        <div class="OutputFrame" id="OutputFrame">
+            <table id="of">
+                <tr><th>Name</th><th>Text</th><th>Level</th><th>Type</th><tr>
+            </table>
+        </div>
+        <script>
+            var OutputFrame = document.getElementById("of")
+            var InputArea = document.getElementById("text")
+            var ProgressBar = document.getElementById("progress")
+            const DefaultOutputFrame = OutputFrame.innerHTML
+            ProgressBar.value = 0
+            let Varibles = []
+            let Errors = false
+            function Compile(){
+                ClearLog()
+                ProgressBar.value = 0
+                Varibles = []
+                var Data = InputArea.value
+                var Lines = Data.split(";")
+                ProgressBar.value = 5
+                let NumOfLines = 0
+                for (let index in Lines){
+                    NumOfLines = index
+                }
+                for (let index in Lines)
+                    ProgressBar.value = (ProgressBar.value/NumOfLines)*index
+                    if (Errors == true){
+                        AddItemToLog("Compiler","Stack was ended due to a error, line: "+String(index-1),5,"Error")
+                        break
+                    }
+                    var Object = Lines[index]
+                    if (Object == ""){
+                        ProgressBar.value = 100
+                        AddItemToLog("Compiler","Stack Ended",5,"System")
+                        break
+                    }
+                    var Operation = Object.split("#")[0]
+                    var Data = Object.split("#")[1]
+                    console.log(Operation)
+                    let OperationFound = false
+                    if (Operation == "DEFINE"){
+                        OperationFound = true
+                        DefineVar(Data,index)
+                    }
+                    if (Operation == "PRINT"){
+                        OperationFound = true
+                        PrintValue(Data,index)
+                    }
+                    if (Operation == "ERROR"){
+                        OperatoinFound = true
+                        ErrorValue(Data,index)
+                    }
+                    if (Operation == "OPERATION"){
+                        OperationFound = true
+                    }
+                    if (OperationFound == false){
+                        AddItemToLog("Operation","Operation is not found: "+Operation+" line: "+String(index),5,"Error")
+                        break
+                    }
+                }
+            }
+            function PrintValue(Data,Line){
+                let CoreData = Data
+                var CFV = CheckForVar(Data)
+                let Defined = false
+                if (CFV == true){
+                    var SV = SearchValue(Data)
+                    Defined = true
+                    if (SV==[]){
+                        AddItemToLog("Varible","No varible found, line: "+String(Line),5,"Error")
+                    Errors = true
+                    }
+                    CoreData = SV[1]
+                }
+                if (Data == ""){
+                    AddItemToLog("Print","Failed to print data, line: "+String(Line),5,"Error")
+                    Errors = true
+                }
+                var CFS = CheckForString(Data)
+                //console.log(CFS)
+                if (CFS == true){
+                    Defined = true
+                    CoreData = GetString(CoreData,Line)
+                }
+                if (Defined == false){
+                    AddItemToLog("Define","Failed to define varible type, line: "+String(Line),5,"Error")
+                    Errors = true
+                }
+                AddItemToLog("Core-Print",CoreData,0,"Info")
+
+            }
+            function ErrorValue(Data,Line){
+                let CoreData = Data
+                var CFV = CheckForVar(Data)
+                let Defined = false
+                if (CFV == true){
+                    var SV = SearchValue(Data)
+                    Defined = true
+                    if (SV==[]){
+                        AddItemToLog("Varible","No varible found, line: "+String(Line),5,"Error")
+                    Errors = true
+                    }
+                    CoreData = SV[1]
+                }
+                if (Data == ""){
+                    AddItemToLog("Print","Failed to print data, line: "+String(Line),5,"Error")
+                    Errors = true
+                }
+                var CFS = CheckForString(Data)
+                //console.log(CFS)
+                if (CFS == true){
+                    Defined = true
+                    CoreData = GetString(CoreData,Line)
+                }
+                if (Defined == false){
+                    AddItemToLog("Define","Failed to define varible type, line: "+String(Line),5,"Error")
+                    Errors = true
+                }
+                AddItemToLog("Core-Print-Error",CoreData,4,"Error")
+                Errors = true
+
+            }
+            function CheckForVar(Data){
+                let Found = false
+                for (let index in Data){
+                    var character = Data[index]
+                    if (index == 0){
+                        if (character == "~"){
+                            Found = true
+                        }
+                    }
+                }
+                if (Found == true){
+                    return true
+                } else {
+                    return false
+                }
+            }
+            function CheckForString(Data){
+                var Split = Data.split("\"")
+                if (Split[0] == ""){
+                    
+                } else {
+                    return false
+                }
+                var Split2 = Split[1].split("\"")
+                //console.log(Split)
+                //console.log(Split2)
+                if (Split[2] == ""){
+                    if (Split2[0] == ""){
+                        return false
+                    } else {
+                        return true
+                    }
+                    return true
+                } else {
+                    return false
+                }
+            }
+            function GetString(Data,Line){
+                var string1 = Data.split("\"")[1]
+                if (string1 == ""){
+                    AddItemToLog("String","Failed to find string, line: "+String(Line),5,"Error")
+                    Errors = true
+                }
+                var string2 = string1.split("\"")[0]
+                if (string2=="") {
+                    AddItemToLog("String","Failed to find string data, line: "+String(Line),5,"Error")
+                    Errors = true
+                }
+                return string2
+            }
+            function SearchValue(Name){
+                console.log(Varibles)
+                for (let index in Varibles){
+                    var object = Varibles[index]
+                    if (object[0] == Name.split("~")[1]){
+                        return object
+                    }
+                }
+                return []
+            }
+            function DefineVar(Data,Line){
+                var SplitData = Data.split("=")
+                var VarName = SplitData[0]
+                let VarData = SplitData[1]
+                var CFS = CheckForString(VarData)
+                let Defined = false
+                if (CFS == true){
+                    Defined = true
+                    VarData = GetString(VarData,Line)
+                }
+                if (Defined == false){
+                    AddItemToLog("Define","Failed to define varible type, line: "+String(Line),5,"Error")
+                    Errors = true
+                }
+                if (VarName == ""){
+                    AddItemToLog("Define","Failed to define varible, line: "+String(Line),5,"Error")
+                    Errors = true
+                }
+                if (VarData == ""){
+                    AddItemToLog("Define","Failed to define varible, line: "+String(Line),5,"Error")
+                    Errors = true
+                }
+                Varibles.push([VarName,VarData])
+            }
+            function AddItemToLog(Name,Text,Level,Type){
+                OutputFrame.innerHTML = OutputFrame.innerHTML + "<tr><td>"+Name+"</td><td>"+Text+"</td><td>"+Level+"</td><td>"+Type+"</td></tr>"
+            }
+            function ClearLog(){
+                OutputFrame.innerHTML = DefaultOutputFrame
+            }
+        </script>
+    </body>
+</html>

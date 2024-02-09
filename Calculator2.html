@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<head>
+	<title>Calculator</title>
+</head>
+<style>
+	body{
+		color: white;
+		background-color: #818181;
+	}
+	a{
+		color: white;
+	}
+	h3{
+		color: white;
+	}
+	table, th {
+		background-color: #818181;
+		border-width: 1px;
+		border-radius: 1px;
+		border-style: solid;
+		border-color: white;
+	}
+	td {
+		background-color: #818181;
+	}
+	button{
+		color: white;
+		background-color: #818181;
+		border-color: white;
+		border-radius: 10px;
+		border-width: 1px;
+	}
+	h2{
+		color: blue;
+		background-color: white;
+	}
+	code{
+		color: green;
+	}
+	.DebugConsole{
+		background-color: grey;
+		color: green;
+	}
+</style>
+<body>
+	<h1>Calculator</h1>
+	<h3 id="Display"></h3>
+	<button onClick= RunCalculations()>Enter Equation</button>
+    <table id="tbl">
+        <tr>
+            <th>Name</th><th>Value</th>
+        </tr>
+    </table>
+</body>
+<script>
+var Display = document.getElementById("Display")
+var VaribleTable = document.getElementById("tbl")
+let Ans = 0
+let CalVars = []
+function RunCalculations(){
+    console.log(CalVars)
+	let Tokens = []
+	var data = prompt("Enter Equation")
+	RawTokens = GetTokens(data)
+	CompileToken = CompileTokens(RawTokens)
+	Output = CalculateTokens(CompileToken)
+	Ans = Output
+	Display.innerHTML = Output
+	alert(Output)
+}
+function CalculateTokens(CT){
+	let MathTokens = []
+	MathTokens = CT.split(":")
+	let num1 = MathTokens[0]
+	var operator = MathTokens[1]
+	let num2 = MathTokens[2]
+    	let RawNum1 = num1
+	let RawNum2 = num2
+	num1 = Number(num1)
+	num2 = Number(num2)
+	let MathNum = 0
+	if (operator == "+"){
+		MathNum = num1 + num2
+	}
+	if (operator == "-"){
+		MathNum = num1 - num2
+	}
+	if (operator == "*"){
+		MathNum = num1 * num2
+	}
+	if (operator == "/"){
+		MathNum = num1 / num2
+	}
+	if (operator == "^"){
+		MathNum = num1 ** num2
+	}
+	if (operator == "~"){
+		var e1 = num1 ** num2
+		var e2 = e1 * num2
+		var e3 = e2 / e1
+		MathNum = e3 * e1
+	}
+	if (operator == "r"){
+		var div = 1/num1
+		MathNum = num2**div
+	}
+	if (operator == "%"){
+		var Precent = (num2/num1)*100
+		MathNum = Precent
+	}
+    if (operator == "p"){
+        var a = num1**2
+        var b = num2**2
+        var c = a+b
+        var sqrtc = c**(1/2)
+        MathNum = sqrtc
+    }
+    if (operator == "a"){
+        CalVars.push([RawNum1,num2])
+		VaribleTable.v
+	VaribleTable.innerHTML = VaribleTable.innerHTML + "<tr><td>"+RawNum1+"</td><td>"+RawNum2+"</td></tr>"
+        MathNum = num2
+    }
+	return MathNum
+}
+function FindVar(Name){
+    const Blank = [0,0]
+    for (let index in CalVars){
+        let token = CalVars[index]
+        console.log(token[0])
+        if (token[0] == Name){
+            console.log(token[1])
+            return token
+        }
+    }
+    return Blank
+}
+function CompileTokens(tokens){
+	let CompileString = ""
+	let LastType = false
+	for (let index in tokens){
+		let token = tokens[index]
+		console.log(token)
+		let t = false
+		let s = false
+		if (token == "+"){
+			//CompileString = CompileString + token
+			t = true
+			CompileString = CompileString + FormatCS(CompileString,token,t,LastType)
+		}
+		if (token == "-"){
+			t = true
+			CompileString = CompileString + FormatCS(CompileString,token,t,LastType)
+		}
+		if (token == "*"){
+			t = true
+			CompileString = CompileString + FormatCS(CompileString,token,t,LastType)
+		}
+		if (token == "/"){
+			t = true
+			CompileString = CompileString + FormatCS(CompileString,token,t,LastType)
+		}
+		if (token == "^"){
+			t = true
+			CompileString = CompileString + FormatCS(CompileString,token,t,LastType)
+		}
+		if (token == "~"){
+			t = true
+			CompileString = CompileString + FormatCS(CompileString,token,t,LastType)
+		}
+		if (token == "r"){
+			t = true
+			CompileString = CompileString + FormatCS(CompileString,token,t,LastType)
+		}
+		if (token == "%"){
+			t = true
+			CompileString = CompileString + FormatCS(CompileString,token,t,LastType)
+		}
+		if (token == "p"){
+			t = true
+			CompileString = CompileString + FormatCS(CompileString,token,t,LastType)
+		}
+        if (token == "a"){
+			t = true
+			CompileString = CompileString + FormatCS(CompileString,token,t,LastType)
+		}
+		//if (token == "@"){
+			//t = true
+			//CompileString = CompileString + FormatCS(CompileString,Ans,t,LastType)
+		//}
+		if (t == false){
+            var Find = FindVar(token)
+            if (Find[0] == 0){
+                //console.log("No Var Found")
+            }else{
+                console.log("Var Found: "+toString(Find[1]))
+                t = false
+				s = true
+				CompileString = CompileString + FormatCS(CompileString,Find[1],t,LastType)
+            }
+			if (token == "@"){
+				t = false
+				s = true
+				CompileString = CompileString + FormatCS(CompileString,Ans,t,LastType)
+			} 
+			if (token == "p"){
+				t = false
+				s = true
+				CompileString = CompileString + FormatCS(CompileString,3.14,t,LastType)
+			}
+			if (token == "|"){
+				t = false
+				s = true
+				CompileString = CompileString + FormatCS(CompileString,3.1415926535,t,LastType)
+			}
+			if (s == false){
+				t = false
+				CompileString = CompileString + FormatCS(CompileString,token,t,LastType)
+			}	
+		}
+		LastType = t
+	}
+	console.log(CompileString)
+	return CompileString
+}
+function FormatCS(CS,NewToken,TokenType,LastTokenType){
+	let FCS = "" //Format Compile String
+	if (TokenType == true){
+		if (TokenType == LastTokenType){
+			FCS = FCS+NewToken
+		} else {
+			FCS = FCS+":"+NewToken
+		}
+	} else {
+		if (TokenType == LastTokenType){
+			FCS = FCS+NewToken
+		} else {
+			FCS = FCS+":"+NewToken
+		}
+	}
+	console.log(FCS)
+	return FCS
+}
+function GetTokens(rawtk){
+	let TokensSplit = []
+	for (let index in rawtk){
+		let letter = rawtk[index]
+		console.log(letter)
+		TokensSplit.push(letter)
+	}
+	console.log(TokensSplit)
+	return TokensSplit
+}
+</script>

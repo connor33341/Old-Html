@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<head>
+	<title>Links</title>
+</head>
+<style>
+	body{
+		color: white;
+		background-color: #818181;
+	}
+	a{
+		color: white;
+	}
+	h3{
+		color: white;
+	}
+	table, th,td {
+		background-color: #818181;
+		border-width: 1px;
+		border-radius: 1px;
+		border-style: solid;
+		border-color: white;
+	}
+	button{
+		color: white;
+		background-color: #818181;
+		border-color: white;
+		border-radius: 10px;
+		border-width: 1px;
+	}
+	h2{
+		color: blue;
+		background-color: white;
+	}
+	code{
+		color: green;
+	}
+	.DebugConsole{
+		background-color: grey;
+		color: green;
+	}
+</style>
+<body>
+	<h1>Link Storage System</h1>
+	<div id="s"><h3>Click Add to add a link</h3></div>
+	<h3 id="VH"></h3>
+	<div class="New_Link_Container">
+<table id = "tbl">
+<tr>
+<th>Name</th>
+<th>Url</th>
+<th>Options</th>
+</tr>
+</table>
+<!--<button onClick=Reload()>Reload</button>-->
+<!--<button onClick=NewSave()>Save</button>-->
+<!--<button onClick=NewLoad()>Load</button>-->
+<button onClick=Clear()>Clear</button>
+<button onClick=NewAddLink()>AddLink</button>
+<!--<button onClick=Update()>Update</button>-->
+</body>
+<script>
+let CustomLinkBoxHTML = ""
+let ItemStorage = []
+var DefaultTbl = document.getElementById("tbl").innerHTML
+var MaxLength = 50
+var FileHeader = "file:"
+var LinkHeader = "https:"
+function Update(){
+	var Tbl = document.getElementById('tbl')
+	console.log(ItemStorage)
+	Tbl.innerHTML = DefaultTbl
+	var Values = ItemStorage.values()
+	let IndexOfData = -1
+	for (let data_arr of Values) {
+		IndexOfData = IndexOfData+1
+		var Name = data_arr[0]
+		console.log(Name)
+		var Data = data_arr[1]
+		console.log(Data)
+		let DisplayData = Data
+		var MaxNameLength = data_arr[2]
+		var OverSize = data_arr[3]
+		DisplayData = FindRoot(Data)
+		if (OverSize == true){
+			console.log("Oversize link")
+			var Small = DisplayData.slice(0,MaxNameLength)
+			if (DisplayData.split("/")[0] == FileHeader){
+				DisplayData = Small+"..."+" (file)"
+			} else {
+				DisplayData = Small+"..."//+" (."+GetDomain(DisplayData)+")"
+			}
+			//DisplayData = DisplayData+"..."
+		} else {
+			if (DisplayData.split("/")[0] == FileHeader){
+				DisplayData = DisplayData + " (file)"
+			} else {
+				//DisplayData = DisplayData + " (."+GetDomain(DisplayData)+")"
+			}
+		}
+		Tbl.innerHTML = Tbl.innerHTML+"<tr><td>"+Name+"</td><td><a target=new href = "+Data+">"+DisplayData+"</a></td><td><button onClick = RemoveItem("+IndexOfData+")>Remove</button></td></tr>"
+		
+	}
+}
+function FindRoot(URL){
+	var Roots = URL.split("/")
+	let Root = Roots[2]
+	if (Root == ""){
+		Root = FileHeader+"//"+Roots[5]+"/"+Roots[6]
+	} else {
+		Root = "https://"+Root
+	}
+	return Root
+}
+function GetDomain(Root){
+	var RootData = Root.split(".")
+	let Domain = RootData[RootData.length-1]
+	return Domain
+}
+function AddItem(Name,URL,Lenght,IsOverSize){
+	ItemStorage.push([Name,URL,Lenght,IsOverSize])
+	Update()
+	NewSave()
+}
+function RemoveItem(Index){
+	var c = confirm("Do you want to remove the link?")
+	if (c==true){
+		ItemStorage.splice(Index,1)
+		Update()
+		NewSave()
+	}
+}
+function SetCustomLinkBox(){
+	var tbl = document.getElementById("tbl")
+	CustomLinkBoxHTML = tbl.innerHTML
+}
+function Load(){
+	var tbl = document.getElementById("tbl")
+	var storage = localStorage.getItem("Data")
+	if (storage == null){
+	console.log("No data saved")
+	} else {
+	tbl.innerHTML = storage
+	CustomLinkBoxHTML = storage}
+}
+function Save(){
+	localStorage.setItem("Data",CustomLinkBoxHTML)
+}
+function ToJSON(Dta){
+	var J = JSON.stringify(Dta)
+	return J
+}
+function FromJSON(Dta){
+	var J = JSON.parse(Dta)
+	return J
+}
+function NewSave(){
+	var J = ToJSON(ItemStorage)
+	localStorage.setItem("ArrData",J)
+}
+function NewLoad(){
+	var data = localStorage.getItem("ArrData")
+	if (data == null){
+		console.log("No Data")
+	} else {
+		var J = FromJSON(data)
+		ItemStorage = J
+		Update()
+	}
+}
+function NewAddLink(){
+	var add_Confirm = confirm("Would you like to add a new link?")
+	if (add_Confirm == true){
+		var inp_name = prompt("Name")
+		var input = prompt("Url")
+		if (input.length > MaxLength){
+			console.log("Oversize")
+			AddItem(inp_name,input,MaxLength,true)
+		} else {
+			AddItem(inp_name,input,input.length,false)
+		}
+	}
+}
+//Old method for max length input.length
+function AddLink(){
+	var add_Confirm = confirm("Would you like to add a new link?")
+	if (add_Confirm == true){
+		var inp_name = prompt("Name")
+		var input = prompt("Url")
+		var tbl = document.getElementById("tbl")
+		tbl.innerHTML = CustomLinkBoxHTML+"<tr><td>"+inp_name+"</td><td><a target=blank href ="+input+">"+input+"</a></td><td><button>Remove</button></td></tr>"	
+		CustomLinkBoxHTML = tbl.innerHTML
+		localStorage.setItem("Data",CustomLinkBoxHTML)
+	}
+}
+function Reload() {
+	alert("Reloading")
+	location.reload()
+}
+function Clear(){
+	var cc = confirm("Do you want to clear your data?")
+	if (cc == true){
+		localStorage.removeItem("ArrData")
+		Reload()
+	}
+}
+NewLoad()
+</script>

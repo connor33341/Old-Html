@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<style>
+	body{
+		color: white;
+		background-color: #818181;
+	}
+	a{
+		color: white;
+	}
+	h3{
+		color: white;
+	}
+	table, th,td {
+		background-color: #818181;
+		border-width: 1px;
+		border-radius: 1px;
+		border-style: solid;
+		border-color: white;
+	}
+	button{
+		color: white;
+		background-color: #818181;
+		border-color: white;
+		border-radius: 10px;
+		border-width: 1px;
+	}
+	h2{
+		color: blue;
+		background-color: white;
+	}
+	code{
+		color: green;
+	}
+	.DebugConsole{
+		background-color: grey;
+		color: green;
+	}
+</style>
+<head>
+	<title>ToDo</title>
+</head>
+<body>
+	<h1>ToDo</hi>
+	<h3>Click on new list to make a new list</h3>
+	<table id="tbl">
+	<tr>
+	<th>Name</th><th>Options</th>
+	</tr>
+	</table>
+	<button onClick=AddList()>New List</button>
+	<button onClick=Clear()>Clear</button>
+	<table id="I">
+	<tr>
+	<th>Name</th><th>Text</th><th>Options</th>
+	</tr>
+	</table>
+</body>
+<script>
+	var Tbl_L = document.getElementById("tbl")
+	var Tbl_I = document.getElementById("I")
+	var Default_Tbl_L = Tbl_L.innerHTML
+	var Default_Tbl_I = Tbl_I.innerHTML
+	var Lists = []
+	var DeafaultI = Tbl_L.innerHTML
+	Tbl_L.innerHTML = ""
+	function Clear(){
+		var c = confirm("Do you want to clear all lists?")
+		if (c==true){
+			localStorage.removeItem("LD")
+			location.reload()
+		}
+	}
+	function Save(){
+		var JSON_S = JSON.stringify(Lists)
+		localStorage.setItem("LD",JSON_S)
+	}
+	function Load(){
+		var data = localStorage.getItem("LD")
+		if (data == null){
+			console.log("No Data")
+		} else {
+			var JSON_L = JSON.parse(data)
+			Lists = JSON_L
+			UpdateLists()
+		}
+		
+	}
+	function UpdateLists(){
+		console.log(Lists)
+		Tbl_L.innerHTML = Default_Tbl_L
+		var ListData = Lists.values()
+		let Index = -1
+		for (let List of ListData){
+			Index = Index+1
+			var InnerList = List[1]	
+			var Name = List[0]
+			Tbl_L.innerHTML=Tbl_L.innerHTML+"<tr><td>"+Name+"</td><td><button onClick=SetListOpnTbl("+Index+")>Open</button><button onClick=AddMiniList("+Index+")>Add</button><button onClick=RemoveList("+Index+")>Remove</button></td></tr>"
+		}
+		Save()
+	}
+	function RemoveList(Index){
+		var c = confirm("Do you want to remove this item?")
+		if (c==true){
+			Lists.splice(Index,1)
+			UpdateLists()
+			//SetListOpnTbl(Index)
+			Save()
+		}
+	}
+	function SetListOpnTbl(idx){
+		Tbl_I.innerHTML = Default_Tbl_I
+		var Lst = Lists[idx][1]
+		var lst_dta = Lst.values()
+		var Index = -1
+		for (let lst_i of lst_dta){
+			Index = Index+1
+			var Name = lst_i[0]
+			console.log(Name)
+			var Dta = lst_i[1]
+			Tbl_I.innerHTML=Tbl_I.innerHTML+"<tr><td>"+Name+"</td><td>"+Dta+"</td><td><button onClick=RemoveMiniList("+idx+","+Index+")>Remove</button></td></tr>"
+		}
+		Save()
+	}
+	function AddList(){
+		var conf = confirm("Do you want to make a new list?")
+		if (conf == true){
+			var p = prompt("Enter Name")
+			Lists.push([p,[]])
+			UpdateLists()
+		}
+	}
+	function RemoveMiniList(M_index,Index){
+		var obj = Lists[M_index][1]
+		console.log(M_index+"---"+Index)
+		console.log(obj)
+		obj.splice(Index,1)
+		SetListOpnTbl(M_index)
+		
+	}
+	function AddMiniList(Index){
+		var MiniList = Lists[Index][1]
+		var c = confirm("Do you want to add a new item?")
+		if (c==true){
+			var name = prompt("Name")
+			var dta = prompt("Text")
+			MiniList.push([name,dta])
+			UpdateLists()
+			SetListOpnTbl(Index)
+		}
+	}
+	Load()
+</script>

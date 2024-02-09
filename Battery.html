@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head> <title>Battery</title>
+	</head>
+	<style>
+		 body{
+            color: green;
+        font-family: 'Courier New', Courier, monospace;
+		background-color: #000000;
+	}
+	a{
+		color: green;
+        font-family: 'Courier New', Courier, monospace;
+	}
+	h3{
+		color: green;
+        font-family: 'Courier New', Courier, monospace;
+	}
+	table, th,td {
+		background-color: #000000;
+		border-width: 1px;
+		border-radius: 1px;
+		border-style: solid;
+		border-color: green;
+	}
+	button{
+		color: green;
+        font-family: 'Courier New', Courier, monospace;
+		background-color: #000000;
+		border-color: green;
+		border-radius: 10px;
+		border-width: 1px;
+	}
+	h2{
+		color: blue;
+		background-color: white;
+	}
+	code{
+		color: green;
+        font-family: 'Courier New', Courier, monospace;
+	}
+	.DebugConsole{
+		background-color: grey;
+		color: green;
+	}
+	#BAR{
+		background-color: grey;
+	}
+	#INNERBAR2 {
+		background-color: green;
+		width: 100%;
+		height: 50px;
+	}
+	</style>
+	<body>
+		<h1>Battery</h1>
+		<h3>Load your battery information to see you current battery status</h3>
+		<button onClick=Scan()>Load Battery Information</button>
+		<div id = "BAR" width=100% height=100px hidden=true>
+		<br>
+			<div id = "INNERBAR" width=0px><br></div>
+		<br>
+		</div>
+		<br>
+		<progress id="INNERBAR2"></progress>
+		<br>
+		<h3 id="STS">100%</h3>
+		<table id="TBL">
+			<tr><th>Type</th><th>Information</th></tr>
+		</table>
+		<script>
+			const TBL = document.getElementById("TBL");
+			const DefaultTBL = TBL.innerHTML;
+			const STS = document.getElementById("STS");
+			const INNERBAR = document.getElementById("INNERBAR2");
+			const ScreenX = screen.availHeight
+			const ScreenY = screen.availWidth
+			function AddRow(T,I){
+				TBL.innerHTML = TBL.innerHTML + "<tr><td>"+T+"</td><td>"+I+"</td></tr>"
+			}
+			function Scan(){
+				TBL.innerHTML = DefaultTBL
+				let infoList = ['charging','chargingTime','dischargingTime','level']
+				console.assert(infoList)
+				clientInformation.getBattery().then((Battery)=>{
+					STS.innerText = String(Battery.level*100)+"%"
+					INNERBAR.setAttribute("value", String(Battery.level))
+					for (let index in infoList){
+						var object = Battery[infoList[index]]
+						console.assert(object)
+						AddRow(infoList[index],object)
+					}
+				});
+			}
+			setInterval(function(){
+				Scan();
+			},10000)
+		</script>
+	</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>String Decryption</title>
+    </head>
+    <body>
+        <header>
+            <h1>String Decription</h1>
+        </header>
+        <input id = "b" type="text" placeholder="Enter String Data">
+        <button onClick=Encode()>Encode</button>
+        <h3 id="a"></h3>
+        <script>
+        const a = document.getElementById("a")
+        const b = document.getElementById("b")
+        const stringCharacters = [":UNDEFINED:"," ","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",",",";",":","|"]
+        const modifer = -1 // Edit character data by 1
+            function Encode(){
+                var textData = b.value
+                console.log(textData)
+                var text = "";
+                for (let i in textData){
+                    var character = textData[i]
+                    let characterIndex = 0
+                    let actualindex = -1
+                    for (let index in stringCharacters){
+                        var characterI = stringCharacters[index]
+                        actualindex = actualindex + 1
+                        if (characterI == character){
+                            characterIndex = actualindex//index
+                        }
+                    }
+                    var newCharacter = stringCharacters[characterIndex+modifer]
+                    console.log(characterIndex+modifer)
+                    console.log(newCharacter)
+                    text = text + newCharacter
+                }
+                console.log(text)
+                a.innerText = text
+            }
+            function Func() {
+            fetch("./EncodeSheet.json")
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => stringCharacters=data.Map);
+            }
+            function Func2() {
+        fetch("./Configuration.json")
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => console.log(data));
+      }
+      Func();Func2()
+        </script>
+    </body>
+</html>

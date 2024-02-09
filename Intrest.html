@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Compound Intrest</title>
+	</head>
+	<body>
+		<h1>Compound Intrest</h1>
+		<h3 id="ITR">Intrest: 0</h3>
+		<button onClick = Calculate()>Calculate</button>
+		<script>
+			const ITR = document.getElementById("ITR")
+			function Calculate(){
+				let F = 0
+				let P = 0
+				let R = 0
+				let T = 0
+				let N = 0
+				P = Number(prompt("Principle"))
+				R = Number(prompt("Rate"))/100+1
+				T = Number(prompt("Time"))
+				N = Number(prompt("Compounded"))
+				let NR = R/N
+				let NT = T*N
+				let NRNT = NT**NT
+				F = P*NRNT
+				ITR.innerText = "Intrest: "+String(F)
+			}
+		</script>
+	</body>
+</html>
